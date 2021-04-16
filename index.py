@@ -7,11 +7,11 @@ from sklearn.linear_model import LinearRegression
 import numpy as np
 import plotly.express as px
 
-df = pd.read_excel('Burnout rate - After Cleanse.xlsx')
+df = pd.read_csv('Burnout-rate-After-Cleanse.csv')
 
 #ML - Model
 # loading the dataset
-df1 = pd.read_excel('Burnout Rate - Before modelling.xlsx')
+df1 = pd.read_csv('Burnout-Rate-Before-modelling.csv')
 data = df1[['burnout', 'Employee_burnout']]
 # Since the last column is in words, it has to be converted into a suitable scale
 data['scale'] = 0
