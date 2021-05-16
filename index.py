@@ -1,7 +1,8 @@
 from sklearn import tree
 import streamlit as st
 import pandas as pd
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import seaborn as sns
 from plotly import graph_objs as go
 from sklearn.linear_model import LinearRegression
 import numpy as np
@@ -29,7 +30,8 @@ model.fit(x, y)
 
 
 st.title("Identifying signs of Employee burnout")
-nav = st.sidebar.radio("Navigation", ["Home", "EDA", "Are you burntout?"])
+nav = st.sidebar.radio(
+    "Navigation", ["Home", "EDA", "Generic EDA", "Are you burntout?"])
 
 if nav == "Home":
     st.markdown(""" ## Introduction """, True)
@@ -148,6 +150,164 @@ if nav == "EDA":
                      names="Partly – Job satisfaction", template="seaborn")
         fig.update_traces(rotation=90, pull=0.05, textinfo="percent+label")
         st.plotly_chart(fig)
+
+if nav == "Generic EDA":
+    df2 = pd.read_csv('Burnout_full.csv')
+
+    df2['Audio conversation(confidence)'] = df['Audio conversation(confidence)'].astype(
+        float)
+    df2['General leave patterns'] = df['General leave patterns'].astype(float)
+    df2['Sick leave(s)'] = df['Sick leave(s)'].astype(float)
+    df2['On an office laptop'] = df['On an office laptop'].astype(float)
+    df2['Video of the meeting:'] = df['Video of the meeting:'].astype(float)
+
+    df2['Performance'] = df['Performance'].fillna(df['Performance'].mean())
+    df2['Time/Duration'] = df['Time/Duration'].fillna(df['Time/Duration'].mean())
+    df2['General leave patterns'] = df['General leave patterns'].fillna(df['General leave patterns'].mean())
+    df2['Sick leave(s)'] = df['Sick leave(s)'].fillna(df['Sick leave(s)'].mean())
+    df2['Audio conversation(confidence)'] = df['Audio conversation(confidence)'].fillna(df['Audio conversation(confidence)'].mean())
+    df2['Video of the meeting:'] = df['Video of the meeting:'].fillna(df['Video of the meeting:'].mean())
+
+    st.markdown("Exploratory data analysis Exploratory Data Analysis refers to the critical process of performing initial investigations on data so as to discover patterns,to spot anomalies,to test hypothesis and to check assumptions with the help of summary statistics and graphical representations. plotly is widely used to make beautiful and understandable visualisations. Project ID vs Performance: Employees with project ID 8 have higher performance compared to other groups")
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Project ID vs Performance")
+    plt.xlabel('Project ID')
+    plt.ylabel('Performance')
+    plt.scatter(df2['Project ID'], df2['Performance'])
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Project ID vs Time series view of the usage of teams for the purpose of communication or documents")
+    plt.xlabel('Project ID')
+    plt.ylabel('Time series view of the usage of teams for the purpose of communication or documents')
+    plt.scatter(df2['Project ID'], df2['Time series view of the usage of teams for the purpose of communication or documents'], c='red')
+
+    st.markdown("Performance vs Missed deadlines For the analysis on performance vs missed deadlines, we use a scatter plot. The missed deadlines will be plotted on the y-axis and the performance will be plotted on the x-axis. From the below analysis, we can make out that performance and missed deadlines are very closely related. Most of the data is concentrated around performance(5-8) and missed deadlines(6-12).So we can conclude that the employees who have a moderate performance also have medium rates of missing deadlines. While the employees with performance higher than 8 have not missed a lot of deadlines.")
+    plt.figure(figsize =(12, 8))
+    plt.title("Performance vs Missed deadlines")
+    plt.xlabel('Performance')
+    plt.ylabel('Missed deadlines')
+    plt.scatter(df2['Performance'],df2['Missed deadlines'], c='red')
+
+    st.markdown("Performance vs Workload We have used scatter plots to analyse Performance vs Workload. Here we can clearly note that most of the data is concentrated around performance(4-8) and workload(2-4). We can also note from the graph below that asworkload increases,so does the performance of the employee.")
+    plt.figure(figsize =(12, 8))
+    plt.title("Performance vs Peer(s) workload")
+    plt.xlabel('Performance')
+    plt.ylabel('Peer(s) workload')
+    plt.scatter(df2['Performance'],df2['Peer(s) workload'])
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Performance vs Time/Duration")
+    plt.xlabel('Performance')
+    plt.ylabel('Time/Duration')
+    plt.scatter(df2['Performance'], df2['Time/Duration'])
+
+    sns.catplot(x='Performance',y='General leave patterns', data=df2.sort_values("General leave patterns"),kind='swarm',height=6,aspect= 1.5,color='r')
+    plt.show()
+
+    sns.catplot(x='Periodic employee survey feedbacks',y='Performance', data=df2.sort_values("Periodic employee survey feedbacks"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='Periodic employee survey feedbacks',y='General leave patterns', data=df2.sort_values("Periodic employee survey feedbacks"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='Periodic employee survey feedbacks',y='Sick leave(s)', data=df2.sort_values("Periodic employee survey feedbacks"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='External factors(interference)',y='Video of the meeting:', data=df2.sort_values("External factors(interference)"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='External factors(interference)',y='Number of meetings participated', data=df2.sort_values("External factors(interference)"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='External factors(interference)',y='Performance', data=df2.sort_values("External factors(interference)"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='Communication(changes present or not)',y='Audio conversation(confidence)', data=df2.sort_values("Communication(changes present or not)"),kind='strip',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Time series view of the usage of teams for the purpose of communication or documents vs Peer(s) workload")
+    plt.xlabel('Time series view of the usage of teams for the purpose of communication or documents')
+    plt.ylabel('Peer(s) workload')
+    plt.scatter(df2['Time series view of the usage of teams for the purpose of communication or documents'], df2['Peer(s) workload'])
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Time series view of the usage of teams for the purpose of communication or documents vs Time/Duration")
+    plt.xlabel('Time series view of the usage of teams for the purpose of communication or documents')
+    plt.ylabel('Missed deadlines')
+    plt.scatter(df2['Time series view of the usage of teams for the purpose of communication or documents'], df2['Missed deadlines'])
+
+    plt.figure(figsize =(12, 8))
+    plt.title("Time series view of the usage of teams for the purpose of communication or documents vs Sick leave")
+    plt.xlabel('Time series view of the usage of teams for the purpose of communication or documents')
+    plt.ylabel('Sick leave')
+    plt.scatter(df2['Time series view of the usage of teams for the purpose of communication or documents'], df2['Sick leave(s)'])
+
+    k = df.sort_values(by = ['General leave patterns'], ascending = False)
+    fig = px.bar(k, x = 'Missed deadlines', y = 'General leave patterns', animation_group = 'Missed deadlines', color = 'Missed deadlines', hover_name = 'Missed deadlines')
+    fig.update_layout(title = 'Missed deadlines vs General Leaves')
+
+    k = df2.sort_values(by = ['Time/Duration'], ascending = False)
+    fig = px.bar(k, x = 'Missed deadlines', y = 'Time/Duration', animation_group = 'Missed deadlines', color = 'Missed deadlines', hover_name = 'Missed deadlines')
+    fig.update_layout(title = 'Missed deadlines vs Working hours')
+
+    sns.catplot(x='Missed deadlines',y='Peer(s) workload', data=df2.sort_values("Peer(s) workload"),kind='swarm',height=6,aspect= 1.5,color='r')
+    plt.show()
+
+    k = df2.sort_values(by = ['General leave patterns'], ascending = False)
+    fig = px.bar(k, x = 'Peer(s) workload', y = 'General leave patterns', animation_group = 'Peer(s) workload', color = 'Peer(s) workload', hover_name = 'Peer(s) workload')
+    fig.update_layout(title = 'Workload vs General Leaves')
+
+    k = df2.sort_values(by = ['General leave patterns'], ascending = False)
+    fig = px.bar(k, x = 'Time/Duration', y = 'General leave patterns', animation_group = 'Time/Duration', color = 'Time/Duration', hover_name = 'Time/Duration')
+    fig.update_layout(title = 'Duration vs General Leaves')
+
+    st.markdown("Personality style vs Performance: The below graph shows how the performance of an employee changes with Personality style. We can observe from the violin plot that performance is high for employees of the INTP type.")
+    sns.catplot(x='Personality style',y='Performance', data=df2.sort_values("Personality style"),kind='violin',height=6,aspect= 1.5,palette = "hls")
+    plt.show()
+
+    sns.catplot(x='Personality style',y='Number of meetings participated', data=df2.sort_values("Personality style"),kind='violin',height=6,aspect= 1.5,palette = "Paired")
+    plt.show()
+
+    sns.catplot(x='Personality style',y='Audio conversation(confidence)', data=df2.sort_values("Personality style"),kind='violin',height=6,aspect= 1.5,palette = "Paired")
+    plt.show()
+
+    st.markdown('Job satisfaction vs General leave pattern: We can see from the below graph that employees who are not happy with their job(disagree) have higher general leaves.And those with higher job satisfaction have lesser general leaves')
+    sns.catplot(x='Partly – Job satisfaction',y='General leave patterns', data=df2.sort_values("Partly – Job satisfaction"),kind='boxen',height=6,aspect= 1.5,palette = "Paired")
+    plt.show()
+
+    grouped = df2.groupby('Partly – Job satisfaction').sum().reset_index()
+    grouped = grouped.sort_values('Performance', ascending=False).reset_index()
+
+    grouped.drop('index', axis=1, inplace=True)
+    grouped = grouped.head(15)
+    fig = px.pie(grouped, values="Performance", names="Partly – Job satisfaction",template="seaborn")
+
+    fig.update_traces(rotation=90, pull=0.05, textinfo="percent+label")
+    fig.show()
+
+    import plotly.figure_factory as ff
+
+    x1 = df2['Performance']
+    x2 = df2['Number of meetings participated']
+
+    hist_data = [x1, x2]
+    group_labels = ['Performance', 'Meetings attended']
+
+    fig = ff.create_distplot(hist_data, group_labels, bin_size=.2)
+    fig.show()
+
+    st.markdown("The above analysis that we have done has given a very good insight on the situation of the employee in the company. We can also recognise that the company has medium to completely burnt out individuals. This can affect the overall productivity of the company. Here are few steps that the company can take in order to reduce the burnout: "
+    "Employees with Project ID 8 have high performance. So, the company can address the head of the team and ask the steps he has taken to boost the morale."
+    "For employees who have very little workload, the company can increase their workload by shifting it from those who have a higher performance and see if there’s any change in the overall performance."
+    "Employees who have given a negative feedback can be questioned by the company or a form could be rolled out to see what further changes/improvements would they expect from the company."
+    "Find out the major disturbance in the external factors and come out with a solution to deal with it."
+    "It is seen that employees who are sometimes interfered in their work hours are more productive. So maybe giving more breaks (10-15 mins for 2 hours) should be encouraged."
+    "The fact that employees who have lesser workload use Microsoft Teams more and those with higher workload use Teams less could be an indicator that the employees might be wasting their time. So, the company can find ways to keep them occupied (like point2)"
+    "The company can enforce more strict rules when it comes to meeting deadlines in such a way that the general leaves and the project deadline don’t come up on the same day."
+    "People of the type INTP have higher performance and have attended more meetings rather than people of other personality type. Also, people of type ISTJ have shown negative confidence. So, the company can look at ways in which it can employ more people of type INTP. Implementing the above methods can help reduce the burnout rate of the employees of the company. After all, caring for the employees will only increase the company’s worth")
+
 
 if nav == "Are you burntout?":
     st.header("Check whether you are burntout")
