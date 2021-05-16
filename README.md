@@ -1,7 +1,7 @@
 # SAPHackathon
 
 ##Guide for website
-Click the link here to get a direct preview of what we have done: https://identifying-employee-burnout.herokuapp.com/
+Click the link here to get a direct preview of what we have done: https://identifying-employee-burnout.herokuapp.com/ (However, this link is not the latest submission of the team, the latest submission of the team happens to be the index.py file of this GIT)
 
 1. The Home page is an intro, the EDA page is to see and check all the Exploratory Data Analysis and the 'Are you burntout?' page is where you check whether you are burntout. 
 2. In the Are you burnout page, enter a random employee ID and Project Id, those two inputs will be used for official purposes and they DO NOT contribute to the ML model.
